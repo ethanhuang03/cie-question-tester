@@ -4,6 +4,7 @@ import urllib.request, urllib.error, urllib.parse
 class pastPaper(object):
     def __init__(self, category="", subject="", year="", season="", paper="", time_zone="", chapter="",
                  website_page=""):
+        self.question_found = False
         self.category = category  # 3: IGCSE, 5: A Level, 7: IB Diploma
         self.subject = subject  # still need to be decoded
         self.year = year  # past paper year
@@ -26,19 +27,29 @@ class pastPaper(object):
             if "offset=" in line:
                 print(line)
 
-    def scrape_paper(self):
+    def scrape_paper_auto(self):
         response = urllib.request.urlopen(self.link)
         webpage = response.read().decode('utf-8')
         for line in webpage.split('\n'):
             if "/questions" in line:
+                self.question_found = True
                 parsed = line[line.find("/questions"):]
                 parsed = parsed.replace("""');">Question</a>""", "")
                 parsed = parsed.replace("""');">Answer</a>""", "")
                 parsed = parsed.replace("', '", " ")
-                print(parsed.split()[0] + " " + ' '.join(parsed.split()[2:]))
+                final = parsed.split()[0] + " " + ' '.join(parsed.split()[2:])
+                print(final)
 
-        '''
-        f = open('temp.html', 'w')
-        f.write(webpage)
-        f.close()
-        '''
+    def scrape_paper_manual(self, file):  # cos some of exam mate stuff is locked without subscription. I can manually download questions html file from 2016 onwards
+        file = open(file, 'r')
+        file_lines = file.readlines()
+        for line in file_lines:
+            if "/questions" in line:
+                self.question_found = True
+                parsed = line[line.find("/questions"):]
+                parsed = parsed.replace("""');">Question</a>""", "")
+                parsed = parsed.replace("""');">Answer</a>""", "")
+                parsed = parsed.replace("', '", " ")
+                final = parsed.split()[0] + " " + ' '.join(parsed.split()[2:])
+                print(final)
+
