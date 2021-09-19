@@ -1,7 +1,7 @@
 import urllib.request, urllib.error, urllib.parse
 
 
-class pastPaper(object):
+class ExamMatePaper(object):
     def __init__(self, category="", subject="", year="", season="", paper="", time_zone="", chapter="",
                  website_page=""):
         self.question_found = False
@@ -17,8 +17,8 @@ class pastPaper(object):
                     f"&years={self.year}&seasons={self.season}&paper={self.paper}&zone={self.time_zone}" \
                     f"&chapter={self.chapter}&order=asc&offset={self.offset}"
 
-    def print_link(self):
-        print(self.link)
+    def return_link(self):
+        return self.link
 
     def find_offset(self):
         response = urllib.request.urlopen(self.link)
@@ -53,3 +53,40 @@ class pastPaper(object):
                 final = parsed.split()[0] + " " + ' '.join(parsed.split()[2:])
                 print(final)
 
+
+class PDFPaper(object):
+    def __init__(self, category, subject_code, year, season, time_zone, paper, mark_scheme=False):
+        self.category = category  # "A Levels", "Cambridge IGCSE"
+        self.subject_code = subject_code
+        self.year = year
+        self.season = season  # "summer", "winter"
+        self.time_zone = time_zone
+        self.mark_scheme = mark_scheme
+        self.paper = paper
+        self.link = ""
+        self.subject = ""
+
+    def return_link(self):
+        return self.link
+
+    def subject_finder(self):
+        '''
+        traverse through html of "https://papers.gceguide.com/{self.category}/" (refer to above)
+        find string self.subject_code
+        do some string manipulation
+
+        self.subject = f"{subject} ({self.subject_code})"  # as a string: eg Economics (9708)
+        '''
+        pass
+
+    def create_link(self):
+        if self.mark_scheme:
+            ms = "ms"
+        else:
+            ms = "qp"
+        self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/" \
+                    f"{self.subject_code}_{self.season[0]}_{ms}_{self.paper}"
+
+    def scrape_paper(self):
+        # downloads the paper with link self.link
+        pass
