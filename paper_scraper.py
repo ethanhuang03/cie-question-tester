@@ -78,7 +78,7 @@ class PDFPaper(object):
         else:
             ms = "qp"
         self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/" \
-                    f"{self.subject_code}_{self.season[0]}_{ms}_{self.paper}"
+                    f"{self.subject_code}_{self.season[0]}_{ms}{self.year[-2:]}_{self.paper}"
 
     def scrape_paper(self):
         # downloads the paper with link self.link
