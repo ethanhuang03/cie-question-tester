@@ -20,13 +20,6 @@ class ExamMatePaper(object):
     def return_link(self):
         return self.link
 
-    def find_offset(self):
-        response = urllib.request.urlopen(self.link)
-        webpage = response.read().decode('utf-8')
-        for line in webpage.split('\n'):
-            if "offset=" in line:
-                print(line)
-
     def scrape_paper_auto(self):
         response = urllib.request.urlopen(self.link)
         webpage = response.read().decode('utf-8')
