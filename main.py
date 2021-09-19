@@ -8,9 +8,9 @@ def scrape_exam_mate(category=3, subject=11):  # cat 3: IG, subject 11: Maths
         print(year)
         for page_number in range(0, 10):
             print(year, page_number)
-            ig_maths = ps.ExamMatePaper(category=category, subject=subject, year=year, website_page=page_number)
-            ig_maths.scrape_paper_auto()
-            if not ig_maths.question_found:
+            paper = ps.ExamMatePaper(category=category, subject=subject, year=year, website_page=page_number)
+            paper.scrape_paper_auto()
+            if not paper.question_found:
                 break
 
 
