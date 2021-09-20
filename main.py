@@ -2,8 +2,8 @@ import paper_scraper as ps
 
 
 def scrape_exam_mate(category=3, subject=11):  # cat 3: IG, subject 11: Maths
-    #  2016, 2017, 2018, 2019, 2020, 2021
-    year = [2009, 2010, 2011, 2012, 2013, 2014, 2015]  # 2016 onwards is locked
+    #
+    year = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]  # 2016 onwards is locked
     for year in year:
         print(year)
         for page_number in range(0, 10):
@@ -30,9 +30,11 @@ def scrape_pdf_paper(category, subject_code, mark_scheme=False):
 
 if __name__ == '__main__':
     #scrape_pdf_paper(category="Cambridge IGCSE", subject_code=0620)
-    #scrape_exam_mate()
+    scrape_exam_mate()
+    '''
     past_paper = ps.PDFPaper(category="Cambridge%20IGCSE", subject_code="0452",
                              year="2011", season="summer", time_zone="1", paper="1", mark_scheme=True)
     past_paper.subject_finder()
     past_paper.partial_link()
     past_paper.scanner()
+    '''

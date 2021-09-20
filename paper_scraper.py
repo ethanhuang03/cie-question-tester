@@ -1,6 +1,4 @@
-import urllib.request, urllib.error, urllib.parse
 import requests
-
 
 
 class ExamMatePaper(object):
@@ -18,13 +16,15 @@ class ExamMatePaper(object):
         self.link = f"https://www.exam-mate.com/topicalpastpapers/?cat={self.category}&subject={self.subject}" \
                     f"&years={self.year}&seasons={self.season}&paper={self.paper}&zone={self.time_zone}" \
                     f"&chapter={self.chapter}&order=asc&offset={self.offset}"
+        self.cookies = {}
 
     def return_link(self):
         return self.link
 
     def scrape_paper_auto(self):
-        response = urllib.request.urlopen(self.link)
-        webpage = response.read().decode('utf-8')
+        session = requests.Session()
+        response = session.get(self.link, headers={'User-Agent': 'Mozilla/5.0'}, cookies=self.cookies)
+        webpage = response.text
         for line in webpage.split('\n'):
             if "/questions" in line:
                 self.question_found = True
