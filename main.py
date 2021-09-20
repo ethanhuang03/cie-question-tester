@@ -31,7 +31,8 @@ def scrape_pdf_paper(category, subject_code, mark_scheme=False):
 if __name__ == '__main__':
     #scrape_pdf_paper(category="Cambridge IGCSE", subject_code=0620)
     #scrape_exam_mate()
-    past_paper = ps.PDFPaper(category="Cambridge%20IGCSE", subject_code="0990",
-                             year=2020, season="summer", time_zone="1", paper="1", mark_scheme=False)
+    past_paper = ps.PDFPaper(category="Cambridge%20IGCSE", subject_code="0452",
+                             year="2011", season="summer", time_zone="1", paper="1", mark_scheme=True)
     past_paper.subject_finder()
-
+    past_paper.create_link()
+    past_paper.print_link()

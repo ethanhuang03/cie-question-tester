@@ -72,7 +72,6 @@ class PDFPaper(object):
 
         self.subject = f"{subject} ({self.subject_code})"  # as a string: eg Economics (9708)
         '''
-        print(f"https://papers.gceguide.com/{self.category}/")
         session = requests.Session()
         response = session.get(f"https://papers.gceguide.com/{self.category}/", headers={'User-Agent': 'Mozilla/5.0'})
         webpage = response.text
@@ -84,7 +83,8 @@ class PDFPaper(object):
                 subject = subject[::-1]
                 subject = subject[:subject.find("'")]
                 subject = subject[::-1]
-                print(subject)
+                subject = subject.replace(" ", "%20")
+                self.subject = subject
 
     def create_link(self):
         if self.mark_scheme:
@@ -92,7 +92,7 @@ class PDFPaper(object):
         else:
             ms = "qp"
         self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/" \
-                    f"{self.subject_code}_{self.season[0]}{self.year[-2:]}_{ms}_{self.paper}{self.time_zone}"
+                    f"{self.subject_code}_{self.season[0]}{self.year[-2:]}_{ms}_{self.paper}{self.time_zone}.pdf"
 
     def scrape_paper(self):
         # downloads the paper with link self.link
