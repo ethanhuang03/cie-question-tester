@@ -58,6 +58,7 @@ class PDFPaper(object):
         self.time_zone = time_zone
         self.mark_scheme = mark_scheme
         self.paper = paper
+        self.season_count = set()
         self.link = ""
         self.subject = ""
 
@@ -94,6 +95,24 @@ class PDFPaper(object):
         self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/" \
                     f"{self.subject_code}_{self.season[0]}{self.year[-2:]}_{ms}_{self.paper}{self.time_zone}.pdf"
 
+    def partial_link(self):
+        self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/"
+
     def scrape_paper(self):
         # downloads the paper with link self.link
         pass
+
+    def scanner(self):
+        print(self.link)
+        session = requests.Session()
+        response = session.get(self.link, headers={'User-Agent': 'Mozilla/5.0'})
+        webpage = response.text
+        for line in webpage.split('\n'):
+            if "listtitle" in line:
+                break
+
+        for count, value in enumerate(line):
+            if (value == "s" or value == "w") and line[count+4] == "q":
+                temp = value+line[count+7]+line[count+8]
+                self.season_count.add(temp)
+        print(self.season_count)
