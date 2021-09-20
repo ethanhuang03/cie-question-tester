@@ -99,6 +99,7 @@ class PDFPaper(object):
         pass
 
     def scan_seasons(self):
+        ms = "q" if self.mark_scheme else "m"
         session = requests.Session()
         response = session.get(self.partial_link, headers={'User-Agent': 'Mozilla/5.0'})
         webpage = response.text
@@ -110,6 +111,6 @@ class PDFPaper(object):
         for count, value in enumerate(line):
             if count + 10 > len(line):
                 break
-            if (value == "s" or value == "w" or value == "m") and (line[count+4] == "q"):
+            if (value == "s" or value == "w" or value == "m") and (line[count+4] in ms):
                 temp = value+line[count+7]+line[count+8]
                 self.season_count.add(temp)

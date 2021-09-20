@@ -14,15 +14,15 @@ def scrape_exam_mate(category=3, subject=11):  # cat 3: IG, subject 11: Maths
                 break
 
 
-def scrape_pdf_paper(category, subject_code, mark_scheme=False):
+def scrape_pdf_paper(category, subject_code, years, mark_scheme=True):
     # year, season, time_zone, paper,
-    years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
     years = [str(x) for x in years]
     past_paper = ps.PDFPaper(category=category, subject_code=subject_code)
+
     for year in years:
         past_paper.input_year(year)
         codes = past_paper.season_count
-        for season in ["summer", "winter"]:
+        for season in ["march", "summer", "winter"]:
             for time_zone in ["1", "2", "3"]:
                 for paper in range(1, 7):
                     code = season[0]+str(paper)+time_zone
@@ -35,7 +35,8 @@ def scrape_pdf_paper(category, subject_code, mark_scheme=False):
 
 
 if __name__ == '__main__':
-    scrape_pdf_paper(category="Cambridge%20IGCSE", subject_code="0455")
+    years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
+    scrape_pdf_paper(category="Cambridge%20IGCSE", subject_code="0455", years=years)
     '''
     scrape_exam_mate()
     past_paper = ps.PDFPaper(category="Cambridge%20IGCSE", subject_code="0452",
