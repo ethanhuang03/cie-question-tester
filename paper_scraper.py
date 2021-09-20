@@ -1,4 +1,6 @@
 import urllib.request, urllib.error, urllib.parse
+import requests
+
 
 
 class ExamMatePaper(object):
@@ -70,12 +72,19 @@ class PDFPaper(object):
 
         self.subject = f"{subject} ({self.subject_code})"  # as a string: eg Economics (9708)
         '''
-        response = urllib.request.urlopen(f"https://papers.gceguide.com/{self.category}/")
-        webpage = response.read().decode('utf-8')
+        print(f"https://papers.gceguide.com/{self.category}/")
+        session = requests.Session()
+        response = session.get(f"https://papers.gceguide.com/{self.category}/", headers={'User-Agent': 'Mozilla/5.0'})
+        webpage = response.text
         for line in webpage.split('\n'):
-            print(line)
             if self.subject_code in line:
-                pass
+                subject_line = line
+                index = subject_line.find(self.subject_code)
+                subject = subject_line[:index+5]
+                subject = subject[::-1]
+                subject = subject[:subject.find("'")]
+                subject = subject[::-1]
+                print(subject)
 
     def create_link(self):
         if self.mark_scheme:
