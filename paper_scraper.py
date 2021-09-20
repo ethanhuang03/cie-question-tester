@@ -59,18 +59,23 @@ class PDFPaper(object):
         self.link = ""
         self.subject = ""
 
-    def return_link(self):
-        return self.link
+    def print_link(self):
+        print(self.link)
 
     def subject_finder(self):
         '''
-        traverse through html of "https://papers.gceguide.com/{self.category}/" (refer to above)
+        traverse through html of " (refer to above)
         find string self.subject_code
         do some string manipulation
 
         self.subject = f"{subject} ({self.subject_code})"  # as a string: eg Economics (9708)
         '''
-        pass
+        response = urllib.request.urlopen(f"https://papers.gceguide.com/{self.category}/")
+        webpage = response.read().decode('utf-8')
+        for line in webpage.split('\n'):
+            print(line)
+            if self.subject_code in line:
+                pass
 
     def create_link(self):
         if self.mark_scheme:
@@ -78,7 +83,7 @@ class PDFPaper(object):
         else:
             ms = "qp"
         self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/" \
-                    f"{self.subject_code}_{self.season[0]}_{ms}{self.year[-2:]}_{self.paper}"
+                    f"{self.subject_code}_{self.season[0]}{self.year[-2:]}_{ms}_{self.paper}{self.time_zone}"
 
     def scrape_paper(self):
         # downloads the paper with link self.link
