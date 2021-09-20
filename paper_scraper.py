@@ -50,7 +50,7 @@ class ExamMatePaper(object):
 
 
 class PDFPaper(object):
-    def __init__(self, category, subject_code, year, season, time_zone, paper, mark_scheme=False):
+    def __init__(self, category, subject_code, year="", season="", time_zone="", paper="", mark_scheme=False):
         self.category = category  # "A Levels", "Cambridge IGCSE"
         self.subject_code = subject_code
         self.year = year
@@ -60,19 +60,13 @@ class PDFPaper(object):
         self.paper = paper
         self.season_count = set()
         self.link = ""
+        self.partial_link = ""
         self.subject = ""
 
     def print_link(self):
         print(self.link)
 
     def subject_finder(self):
-        '''
-        traverse through html of " (refer to above)
-        find string self.subject_code
-        do some string manipulation
-
-        self.subject = f"{subject} ({self.subject_code})"  # as a string: eg Economics (9708)
-        '''
         session = requests.Session()
         response = session.get(f"https://papers.gceguide.com/{self.category}/", headers={'User-Agent': 'Mozilla/5.0'})
         webpage = response.text
@@ -95,24 +89,25 @@ class PDFPaper(object):
         self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/" \
                     f"{self.subject_code}_{self.season[0]}{self.year[-2:]}_{ms}_{self.paper}{self.time_zone}.pdf"
 
-    def partial_link(self):
-        self.link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/"
-
     def scrape_paper(self):
         # downloads the paper with link self.link
         pass
 
-    def scanner(self):
-        print(self.link)
-        session = requests.Session()
-        response = session.get(self.link, headers={'User-Agent': 'Mozilla/5.0'})
-        webpage = response.text
-        for line in webpage.split('\n'):
-            if "listtitle" in line:
-                break
+    def create_partial_link(self):
+        self.partial_link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/"
 
+    def scanner(self):
+        session = requests.Session()
+        response = session.get(self.partial_link, headers={'User-Agent': 'Mozilla/5.0'})
+        webpage = response.text
+        temp = ""
+        for line in webpage.split('\n'):
+            if "file" in line:
+                temp +=line
+        line = temp
         for count, value in enumerate(line):
-            if (value == "s" or value == "w") and line[count+4] == "q":
+            if count + 10 > len(line):
+                break
+            if (value == "s" or value == "w") and (line[count+4] == "q" or line[count+4] == "m"):
                 temp = value+line[count+7]+line[count+8]
                 self.season_count.add(temp)
-        print(self.season_count)

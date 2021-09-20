@@ -16,22 +16,33 @@ def scrape_exam_mate(category=3, subject=11):  # cat 3: IG, subject 11: Maths
 
 def scrape_pdf_paper(category, subject_code, mark_scheme=False):
     # year, season, time_zone, paper,
-    years = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
+    years = [2020]
+    years = [str(x) for x in years]
+    #[2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
+    past_paper = ps.PDFPaper(category=category, subject_code=subject_code)
+    past_paper.subject_finder()
     for year in years:
+        past_paper.year = year
+        past_paper.create_partial_link()
+        past_paper.scanner()
+        codes = past_paper.season_count
         for season in ["summer", "winter"]:
-            for time_zone in [1, 2, 3]:
-                for paper in range(0, 6):
-                    past_paper = ps.PDFPaper(category=category, subject_code=subject_code,
-                                        year=year, season=season, time_zone=time_zone, paper=paper, mark_scheme=mark_scheme)
-                    past_paper.subject_finder()
-                    past_paper.create_link()
-                    print(past_paper.link)
+            for time_zone in ["1", "2", "3"]:
+                for paper in range(1, 7):
+                    code = season[0]+str(paper)+time_zone
+                    if code in codes:
+                        past_paper = ps.PDFPaper(category=category, subject_code=subject_code,
+                                                 year=year, season=season, time_zone=time_zone, paper=paper,
+                                                 mark_scheme=mark_scheme)
+                        past_paper.subject_finder()
+                        past_paper.create_link()
+                        print(past_paper.link)
 
 
 if __name__ == '__main__':
-    #scrape_pdf_paper(category="Cambridge IGCSE", subject_code=0620)
-    scrape_exam_mate()
+    scrape_pdf_paper(category="Cambridge%20IGCSE", subject_code="0455   ")
     '''
+    scrape_exam_mate()
     past_paper = ps.PDFPaper(category="Cambridge%20IGCSE", subject_code="0452",
                              year="2011", season="summer", time_zone="1", paper="1", mark_scheme=True)
     past_paper.subject_finder()
