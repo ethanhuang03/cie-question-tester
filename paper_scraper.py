@@ -1,5 +1,6 @@
 import requests
-
+from pathlib import Path
+import PyPDF2
 
 class ExamMatePaper(object):
     def __init__(self, category="", subject="", year="", season="", paper="", time_zone="", chapter="",
@@ -26,19 +27,6 @@ class ExamMatePaper(object):
         response = session.get(self.link, headers={'User-Agent': 'Mozilla/5.0'}, cookies=self.cookies)
         webpage = response.text
         for line in webpage.split('\n'):
-            if "/questions" in line:
-                self.question_found = True
-                parsed = line[line.find("/questions"):]
-                parsed = parsed.replace("""');">Question</a>""", "")
-                parsed = parsed.replace("""');">Answer</a>""", "")
-                parsed = parsed.replace("', '", " ")
-                final = parsed.split()[0] + " " + ' '.join(parsed.split()[2:])
-                print(final)
-
-    def scrape_paper_manual(self, file):  # cos some of exam mate stuff is locked without subscription. I can manually download questions html file from 2016 onwards
-        file = open(file, 'r')
-        file_lines = file.readlines()
-        for line in file_lines:
             if "/questions" in line:
                 self.question_found = True
                 parsed = line[line.find("/questions"):]
@@ -95,8 +83,16 @@ class PDFPaper(object):
                     f"{self.subject_code}_{self.season[0]}{self.year[-2:]}_{ms}_{self.paper}{self.time_zone}.pdf"
 
     def scrape_paper(self):
-        # downloads the paper with link self.link
-        pass
+        filename = Path('test.pdf')
+        url = self.link
+        response = requests.get(url)
+        filename.write_bytes(response.content)
+        file = open('test.pdf', 'rb')
+        fileReader = PyPDF2.PdfFileReader(file)
+        for x in range(fileReader.numPages):
+            pageObj = fileReader.getPage(x)
+            print(pageObj.extractText())
+        file.close()
 
     def scan_seasons(self):
         ms = "q" if self.mark_scheme else "m"
