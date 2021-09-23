@@ -38,10 +38,12 @@ class ExamMatePaper(object):
                     parsed = parsed.replace("""');">Question</a>""", "")
                     question = parsed.split()[0]
                     question = question.replace("',", "")
+                    question = "https://www.exam-mate.com"+question
                 if """');">Answer</a>""" in line:
                     parsed = parsed.replace("""');">Answer</a>""", "")
                     answer = parsed.split()[0]
                     answer = answer.replace("',", "")
+                    answer = "https://www.exam-mate.com" + answer
                     answer_found = True
 
                 topic = ' '.join(parsed.split()[2:])
