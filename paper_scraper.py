@@ -2,8 +2,9 @@ import requests
 from pathlib import Path
 import PyPDF2
 
+
 class ExamMatePaper(object):
-    def __init__(self, category="", subject="", year="", season="", paper="", time_zone="", chapter="",
+    def __init__(self, category="", subject="", year="", season="", time_zone="", paper="", chapter="",
                  website_page=""):
         self.question_found = False
         self.category = category  # 3: IGCSE, 5: A Level, 7: IB Diploma
@@ -18,23 +19,39 @@ class ExamMatePaper(object):
                     f"&years={self.year}&seasons={self.season}&paper={self.paper}&zone={self.time_zone}" \
                     f"&chapter={self.chapter}&order=asc&offset={self.offset}"
         self.cookies = {}
+        self.question_list = []
 
     def return_link(self):
         return self.link
 
-    def scrape_paper_auto(self):
+    def scrape_paper(self):
         session = requests.Session()
         response = session.get(self.link, headers={'User-Agent': 'Mozilla/5.0'}, cookies=self.cookies)
         webpage = response.text
+        answer_found = False
         for line in webpage.split('\n'):
             if "/questions" in line:
                 self.question_found = True
                 parsed = line[line.find("/questions"):]
-                parsed = parsed.replace("""');">Question</a>""", "")
-                parsed = parsed.replace("""');">Answer</a>""", "")
-                parsed = parsed.replace("', '", " ")
-                final = parsed.split()[0] + " " + ' '.join(parsed.split()[2:])
-                print(final)
+
+                if """');">Question</a>""" in line:
+                    parsed = parsed.replace("""');">Question</a>""", "")
+                    question = parsed.split()[0]
+                    question = question.replace("',", "")
+                if """');">Answer</a>""" in line:
+                    parsed = parsed.replace("""');">Answer</a>""", "")
+                    answer = parsed.split()[0]
+                    answer = answer.replace("',", "")
+                    answer_found = True
+
+                topic = ' '.join(parsed.split()[2:])
+                topic = topic.replace("'", "")
+
+                if answer_found:
+                    final = {"year": self.year, "season": self.season, "time zone": self.time_zone, "paper": self.paper,
+                             "topic": topic, "question": question, "answer": answer}
+                    print(final)
+                    answer_found = False
 
 
 class PDFPaper(object):
@@ -59,7 +76,7 @@ class PDFPaper(object):
             if self.subject_code in line:
                 subject_line = line
                 index = subject_line.find(self.subject_code)
-                subject = subject_line[:index+5]
+                subject = subject_line[:index + 5]
                 subject = subject[::-1]
                 subject = subject[:subject.find("'")]
                 subject = subject[::-1]
@@ -107,6 +124,6 @@ class PDFPaper(object):
         for count, value in enumerate(line):
             if count + 10 > len(line):
                 break
-            if (value == "s" or value == "w" or value == "m") and (line[count+4] in ms):
-                temp = value+line[count+7]+line[count+8]
+            if (value == "s" or value == "w" or value == "m") and (line[count + 4] in ms):
+                temp = value + line[count + 7] + line[count + 8]
                 self.season_count.add(temp)
