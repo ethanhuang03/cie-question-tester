@@ -1,6 +1,8 @@
 import requests
 from pathlib import Path
 import PyPDF2
+import os
+import tabula
 
 
 class ExamMatePaper(object):
@@ -25,16 +27,18 @@ class ExamMatePaper(object):
         return self.link
 
     def scrape_paper(self):
+        print(self.link)
         session = requests.Session()
         response = session.get(self.link, headers={'User-Agent': 'Mozilla/5.0'}, cookies=self.cookies)
         webpage = response.text
         answer_found = False
         for line in webpage.split('\n'):
             if "/questions" in line:
+
                 self.question_found = True
                 parsed = line[line.find("/questions"):]
-
                 if """');">Question</a>""" in line:
+
                     parsed = parsed.replace("""');">Question</a>""", "")
                     question = parsed.split()[0]
                     question = question.replace("',", "")
@@ -85,9 +89,6 @@ class PDFPaper(object):
                 subject = subject.replace(" ", "%20")
                 return subject
 
-    def print_link(self):
-        print(self.link)
-
     def input_year(self, year):
         self.year = year
         self.partial_link = f"https://papers.gceguide.com/{self.category}/{self.subject}/{self.year}/"
@@ -111,6 +112,7 @@ class PDFPaper(object):
         for x in range(fileReader.numPages):
             pageObj = fileReader.getPage(x)
             print(pageObj.extractText())
+            print("-"*100)
         file.close()
 
     def scan_seasons(self):
@@ -129,3 +131,26 @@ class PDFPaper(object):
             if (value == "s" or value == "w" or value == "m") and (line[count + 4] in ms):
                 temp = value + line[count + 7] + line[count + 8]
                 self.season_count.add(temp)
+
+    def multi_choice_ans_finder(self, q_num):
+        filename = Path('paper.pdf')
+        url = self.link
+        response = requests.get(url)
+        filename.write_bytes(response.content)
+        table = tabula.read_pdf("paper.pdf", pages="all", pandas_options={"header": None})
+        for x in table:
+            print(x)
+            print("-----")
+        '''
+        file = open('paper.pdf', 'rb')
+        file_reader = PyPDF2.PdfFileReader(file)
+        for x in range(1,file_reader.numPages):
+            page_obj = file_reader.getPage(x)
+            extracted_text = page_obj.extractText()
+            print(extracted_text)
+            for count, value in enumerate(extracted_text):
+                pass
+        file.close()
+        '''
+
+        os.remove("paper.pdf")
