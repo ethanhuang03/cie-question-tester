@@ -38,6 +38,6 @@ def scrape_pdf_paper(category, subject_code, years, mark_scheme=False):
 
 
 if __name__ == '__main__':
-    years = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
+    years = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
     scrape_exam_mate(year_list=years)
     # scrape_pdf_paper(category="Cambridge%20IGCSE", subject_code="0470", years=years)
