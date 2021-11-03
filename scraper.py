@@ -22,50 +22,42 @@ class ExamMatePaper(object):
                     f"&chapter={self.chapter}&order=asc&offset={self.offset}"
         self.cookies = {}
         self.question_list = []
-        self.multichoice = False
 
     def return_link(self):
         return self.link
 
     def scrape_paper(self):
+        print(self.link)
         session = requests.Session()
         response = session.get(self.link, headers={'User-Agent': 'Mozilla/5.0'}, cookies=self.cookies)
         webpage = response.text
         answer_found = False
         for line in webpage.split('\n'):
-            if "previewQuestion" in line:
-                if "function" in line:
-                    pass
-                else:
-                    parsed = line[line.find("/questions"):]
+            if "/questions" in line:
+
+                self.question_found = True
+                parsed = line[line.find("/questions"):]
+                if """');">Question</a>""" in line:
+
                     parsed = parsed.replace("""');">Question</a>""", "")
                     question = parsed.split()[0]
                     question = question.replace("',", "")
-
-                    topic = ' '.join(parsed.split()[2:])
-                    topic = topic.replace("'", "")
-
-            if "previewAnswer" in line:
-                if "function" in line:
-                    pass
-                else:
-                    answer_found = True
-                    parsed = line[line.find("previewAnswer"):]
-                    parsed = parsed[parsed.find("'"):]
+                    question = "https://www.exam-mate.com"+question
+                if """');">Answer</a>""" in line:
                     parsed = parsed.replace("""');">Answer</a>""", "")
-                    answer = parsed.split()[1]
+                    answer = parsed.split()[0]
                     answer = answer.replace("',", "")
-                    answer = answer.replace("'", "")
-                    if len(answer) == 1:
-                        self.multichoice = True
-                    if self.multichoice:
-                        answer = answer[0]
+                    answer = "https://www.exam-mate.com" + answer
+                    answer_found = True
 
-            if answer_found:
-                final = {"year": self.year, "season": self.season, "time zone": self.time_zone, "paper": self.paper,
-                         "topic": topic, "question": question, "answer": answer}
-                print(final)
-                answer_found = False
+                topic = ' '.join(parsed.split()[2:])
+                topic = topic.replace("'", "")
+
+                if answer_found:
+                    final = {"year": self.year, "season": self.season, "time zone": self.time_zone, "paper": self.paper,
+                             "topic": topic, "question": question, "answer": answer}
+                    print(final)
+                    answer_found = False
 
 
 class PDFPaper(object):
