@@ -1,4 +1,5 @@
 import paper_scraper as ps
+import easyocr
 
 
 def scrape_exam_mate(year_list, category=3, subject=17):  # cat 3: IG, subject 11: Maths
@@ -38,6 +39,10 @@ def scrape_pdf_paper(category, subject_code, years, mark_scheme=False):
 
 
 if __name__ == '__main__':
-    years = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
-    scrape_exam_mate(year_list=years)
+    reader = easyocr.Reader(['en'])
+    result = reader.readtext('https://exam-mate.com/questions/673/60757/673_q_60757_10_1.png', detail=0)
+    print(result)
+
+    # years = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
+    # scrape_exam_mate(year_list=years)
     # scrape_pdf_paper(category="Cambridge%20IGCSE", subject_code="0470", years=years)
