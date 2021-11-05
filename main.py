@@ -39,8 +39,8 @@ def scrape_pdf_paper(category, subject_code, years, mark_scheme=False):
 
 
 if __name__ == '__main__':
-    reader = easyocr.Reader(['en'])
-    result = reader.readtext('https://exam-mate.com/questions/673/60757/673_q_60757_10_1.png', detail=0)
+    reader = easyocr.Reader(['en'], gpu=False)
+    result = reader.readtext('https://www.exam-mate.com//questions/20657/57510/20657_q_57510_3_1.png', detail=0)
     print(result)
 
     # years = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
